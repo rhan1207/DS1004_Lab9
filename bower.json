@@ -1,0 +1,21 @@
+{
+  "name": "DS1004_Lab9",
+  "homepage": "https://github.com/rhan1207/DS1004_Lab9",
+  "authors": [
+    "rhan1207 <hanrj1207@yahoo.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "^2.2.3",
+    "d3": "^3.5.16"
+  }
+}
