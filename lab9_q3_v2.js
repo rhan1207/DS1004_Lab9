@@ -24,13 +24,11 @@ var vrbs = [
 		name: 'acceleration'
 	},
 ]
-var draw_all = function(x_select, y_select) {
+var draw_all = function(x_select, y_select, mpg_min, mpg_max) {
 	var w = 400;
 	var h = 300;
 	var w_margin = w - 50;
 	var h_margin = h - 50;
-	console.log(x_select);
-	console.log(y_select);
 
 // add the graph canvas to the body of the webpage
 var svg = d3.select(".plot svg")
@@ -52,9 +50,16 @@ var svg = d3.select(".plot svg")
 	.get(function(error, rows){		
 		x_values = [];
 		y_values = [];
+		x_values_c = [];
+		y_values_c = [];
+		console.log(mpg_min);
+		console.log(mpg_max);
 		for (var i = 0; i < rows.length; i++){
-			y_values.push(rows[i][x_select]);
-			x_values.push(rows[i][y_select]);
+			x_values.push(rows[i][x_select]);
+			y_values.push(rows[i][y_select]);
+			if (rows[i].mpg >= mpg_min && rows[i].mpg <= mpg_max) 
+				x_values_c.push(rows[i][x_select]);
+				y_values_c.push(rows[i][y_select]);
 		} 
 		var x_min = d3.min(x_values);
 		var x_max = d3.max(x_values);
@@ -96,9 +101,11 @@ var svg = d3.select(".plot svg")
 			.attr('transfrom', 'rotate(-90)')
 			.text(y_select)
 			
-		svg.selectAll('circle')
-		.data(d3.zip(x_values,y_values))
-		.enter().append('circle')
+		var circles = svg.selectAll('circle').data(d3.zip(x_values_c,y_values_c))
+		
+		circles.enter().append('circle')
+		
+		circles
 		.attr('class', 'datapoint')
 		.attr('cx', function(d){
 			return xscale(d[0]);
@@ -107,10 +114,12 @@ var svg = d3.select(".plot svg")
 			return yscale(d[1]);
 		})
 		.attr('r', 3);	
+		
+		circles.exit().remove();
 	});
- 
-
 };
+
+
 $(document).ready(function() {
 	var selectX = $('#sel-x');
 	for (var i = 0; i < vrbs.length; i ++) { 
@@ -131,15 +140,24 @@ $(document).ready(function() {
 	}
 	var x_select; 
 	var y_select;
+	var mpg_min = $('#mpg-min').val();
+	var mpg_max = $('#mpg-max').val();
 	
 	$('#sel-x').on('change', function() { 
 		x_select = $(this).find(':selected').val();
 		if (x_select != undefined && y_select != undefined)
-			draw_all(x_select, y_select);	
+			draw_all(x_select, y_select, mpg_min, mpg_max);	
 	});
 	$('#sel-y').on('change', function() { 
 		y_select = $(this).find(':selected').val();
 		if (x_select != undefined && y_select != undefined)
-			draw_all(x_select, y_select);	
+			draw_all(x_select, y_select, mpg_min, mpg_max);	
+	});
+
+	$('#update').on('click', function() {
+		mpg_min = $('#mpg-min').val();
+		mpg_max = $('#mpg-max').val();
+		if (x_select != undefined && y_select != undefined)
+			draw_all(x_select, y_select, mpg_min, mpg_max);
 	});
 });
