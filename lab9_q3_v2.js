@@ -52,6 +52,7 @@ var svg = d3.select(".plot svg")
 		y_values = [];
 		x_values_c = [];
 		y_values_c = [];
+		list_name =[];
 		console.log(mpg_min);
 		console.log(mpg_max);
 		for (var i = 0; i < rows.length; i++){
@@ -60,6 +61,7 @@ var svg = d3.select(".plot svg")
 			if (rows[i].mpg >= mpg_min && rows[i].mpg <= mpg_max) 
 				x_values_c.push(rows[i][x_select]);
 				y_values_c.push(rows[i][y_select]);
+				list_name.push(rows[i].key);
 		} 
 		var x_min = d3.min(x_values);
 		var x_max = d3.max(x_values);
@@ -113,8 +115,11 @@ var svg = d3.select(".plot svg")
 		.attr('cy', function(d){
 			return yscale(d[1]);
 		})
-		.attr('r', 3);	
-		
+		.attr('r', 3)
+		.on('mouseover', function(d) {
+			var index = x_values.indexOf(d[0]);
+			$('#hovered').text(list_name[index]);
+		});
 		circles.exit().remove();
 	});
 };
