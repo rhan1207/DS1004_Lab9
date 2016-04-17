@@ -155,12 +155,12 @@ d3.csv("car.csv", function(error, data) {
 			.attr('class','axis')
 			.attr('transform', 'translate(0,' +(y_max)+ ')' )
 			.call(xAxis);
-		/*	
+			
 		svg.append('g')
 			.attr('class','axis')
 			.attr('transform', 'translate(' +(x_min)+ ', 0)' )
 			.call(yAxis);
-		*/	
+			
 		svg.selectAll('circle')
 		.data(d3.zip(x_values,y_values))
 		.enter().append('circle')
