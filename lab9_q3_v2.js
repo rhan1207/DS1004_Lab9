@@ -1,13 +1,41 @@
-var draw_all = function() {
+var vrbs = [
+	{
+		id: 'mpg',
+		name: 'mpg' 
+	},
+	{
+		id: 'cylinders',
+		name: 'cylinders'
+	},
+	{
+		id: 'displacement',
+		name: 'displacement'
+	},
+	{
+		id: 'horsepower',
+		name: 'horsepower'
+	},
+	{
+		id: 'weight',
+		name: 'weight'
+	},
+	{
+		id: 'acceleration',
+		name: 'acceleration'
+	},
+]
+var draw_all = function(x_select, y_select) {
 	var w = 400;
 	var h = 300;
 	var w_margin = w - 50;
 	var h_margin = h - 50;
+	console.log(x_select);
+	console.log(y_select);
 
 // add the graph canvas to the body of the webpage
 var svg = d3.select(".plot svg")
-    .attr("width", w) 		//width + margin.left + margin.right)
-    .attr("height", h); 	//height + margin.top + margin.bottom)
+    .attr("width", w) 		
+    .attr("height", h); 	
 
   d3.csv('car.csv')
 	.row(function(d) {
@@ -25,10 +53,9 @@ var svg = d3.select(".plot svg")
 		x_values = [];
 		y_values = [];
 		for (var i = 0; i < rows.length; i++){
-			y_values.push(rows[i].mpg);
-			x_values.push(rows[i].displacement);
+			y_values.push(rows[i][x_select]);
+			x_values.push(rows[i][y_select]);
 		} 
-		
 		var x_min = d3.min(x_values);
 		var x_max = d3.max(x_values);
 		var y_min = d3.min(y_values);
@@ -53,7 +80,7 @@ var svg = d3.select(".plot svg")
 			.attr('text-anchor', 'end')
 			.attr('x', w)
 			.attr('y', h - 40)
-			.text('displacement')
+			.text(x_select)
 				
 		svg.append('g')
 			.classed('axis', true)
@@ -67,7 +94,7 @@ var svg = d3.select(".plot svg")
 			.attr('y', 40)
 			.attr('dy', '.75em')
 			.attr('transfrom', 'rotate(-90)')
-			.text('mpg')
+			.text(y_select)
 			
 		svg.selectAll('circle')
 		.data(d3.zip(x_values,y_values))
@@ -80,12 +107,39 @@ var svg = d3.select(".plot svg")
 			return yscale(d[1]);
 		})
 		.attr('r', 3);	
-		console.log(y_min);
-		console.log(y_max);
 	});
  
 
 };
-$(document).ready(function(){
-	draw_all();	
+$(document).ready(function() {
+	var selectX = $('#sel-x');
+	for (var i = 0; i < vrbs.length; i ++) { 
+		var vrb = vrbs[i];
+		$('<option></option>')
+			.val(vrb.id)
+			.text(vrb.name)
+			.appendTo(selectX)
+	}
+	
+	var selectY = $('#sel-y');
+	for (var i = 0; i < vrbs.length; i ++) { 
+		var vrb = vrbs[i];
+		$('<option></option>')
+			.val(vrb.id)
+			.text(vrb.name)
+			.appendTo(selectY)
+	}
+	var x_select; 
+	var y_select;
+	
+	$('#sel-x').on('change', function() { 
+		x_select = $(this).find(':selected').val();
+		if (x_select != undefined && y_select != undefined)
+			draw_all(x_select, y_select);	
+	});
+	$('#sel-y').on('change', function() { 
+		y_select = $(this).find(':selected').val();
+		if (x_select != undefined && y_select != undefined)
+			draw_all(x_select, y_select);	
+	});
 });
